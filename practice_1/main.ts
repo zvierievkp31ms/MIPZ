@@ -1,3 +1,7 @@
+import { Settings } from "./constants";
+
+const { fieldSize: size, radius } = Settings;
+
 type Cell = {
     x: number
     y: number
@@ -9,9 +13,7 @@ export type Result = {
 }
 
 export const game = function (arr: number[][]) {
-    const size = 19;
-
-    const find_sequence_of_5 = function (user_type: number) {
+    const find_sequence = function (user_type: number, sequence_length: number = radius) {
         let length = 0;
         let left_cell: Cell | null = null;
         return {
@@ -23,14 +25,14 @@ export const game = function (arr: number[][]) {
                         }
                         length += 1;
                     } else {
-                        if (length === 5) {
+                        if (length === sequence_length) {
                             return left_cell as Cell;
                         }
                         length = 0;
                         left_cell = null;
                     }
                 } else {
-                    if (length === 5) {
+                    if (length === sequence_length) {
                         return left_cell as Cell;
                     }
                 }
@@ -38,13 +40,13 @@ export const game = function (arr: number[][]) {
         }
     }
 
-    const check_axles = function (y: number, x: number, start: number, flag: boolean) {
-        const line = find_sequence_of_5(arr[y][x]);
+    const check_axles = function (y: number, x: number, start: number, isHorizontal: boolean) {
+        const line = find_sequence(arr[y][x]);
         let result;
-        const _start = start - 5 > 0 ? start - 5 : 0;
-        const _end = start + 5 < size ? start + 5 : size - 1;
+        const _start = start - radius > 0 ? start - radius : 0;
+        const _end = start + radius < size ? start + radius : size - 1;
         for (let s = _start; s <= _end; s++) {
-            result = line.form(flag ? { x: s, y: y } : { x: x, y: s });
+            result = line.form(isHorizontal ? { x: s, y: y } : { x: x, y: s });
             if (result) return { winner: arr[y][x], cell: result } as Result
         }
         result = line.form(undefined);
@@ -52,7 +54,7 @@ export const game = function (arr: number[][]) {
     }
 
     const check_horizontal = function () {
-        for (let x = 4; x < size - 4; x += 5) {
+        for (let x = radius - 1; x < size - radius + 1; x += radius) {
             for (let y = 0; y < size; y++) {
                 if (arr[y][x] === 1 || arr[y][x] === 2) {
                     const result = check_axles(y, x, x, true)
@@ -63,7 +65,7 @@ export const game = function (arr: number[][]) {
     }
 
     const check_vertical = function () {
-        for (let y = 4; y < size - 4; y += 5) {
+        for (let y = radius - 1; y < size - radius + 1; y += radius) {
             for (let x = 0; x < size; x++) {
                 if (arr[y][x] === 1 || arr[y][x] === 2) {
                     const result = check_axles(y, x, y, false)
@@ -75,7 +77,7 @@ export const game = function (arr: number[][]) {
 
     const get_md_start_end = function (x: number, y: number) {
         let i = 1
-        for (; i <= 5; i++) {
+        for (; i <= radius; i++) {
             if (y + i >= size || x - i < 0) {
                 break;
             }
@@ -85,7 +87,7 @@ export const game = function (arr: number[][]) {
         const start_y = y + i;
 
         i = 1;
-        for (; i <= 5; i++) {
+        for (; i <= radius; i++) {
             if (y - i < 0 || x + i >= size) {
                 break;
             }
@@ -97,7 +99,7 @@ export const game = function (arr: number[][]) {
 
     const get_sd_start_end = function (x: number, y: number) {
         let i = 1
-        for (; i <= 5; i++) {
+        for (; i <= radius; i++) {
             if (y - i < 0 || x - i < 0) {
                 break;
             }
@@ -107,7 +109,7 @@ export const game = function (arr: number[][]) {
         const start_y = y - i;
 
         i = 1;
-        for (; i <= 5; i++) {
+        for (; i <= radius; i++) {
             if (y + i >= size || x + i >= size) {
                 break;
             }
@@ -118,12 +120,12 @@ export const game = function (arr: number[][]) {
         return { start_x, start_y, end_x }
     }
 
-    const check_diagonals = function (x: number, y: number, flag: boolean) {
-        const { start_x, start_y, end_x } = flag ? get_md_start_end(x, y) : get_sd_start_end(x, y);
+    const check_diagonals = function (x: number, y: number, isMainDiagonal: boolean) {
+        const { start_x, start_y, end_x } = isMainDiagonal ? get_md_start_end(x, y) : get_sd_start_end(x, y);
 
-        const line = find_sequence_of_5(arr[y][x]);
+        const line = find_sequence(arr[y][x]);
         let result;
-        for (let i = start_x, k = start_y; i <= end_x; i++, k += flag ? -1 : 1) {
+        for (let i = start_x, k = start_y; i <= end_x; i++, k += isMainDiagonal ? -1 : 1) {
             result = line.form({ x: i, y: k });
             if (result) return { winner: arr[y][x], cell: result } as Result
         }
@@ -131,22 +133,11 @@ export const game = function (arr: number[][]) {
         if (result) return { winner: arr[y][x], cell: result } as Result
     }
 
-    const check_main_diagonal = function () {
-        for (let x = 4; x <= size - 4; x += 5) {
+    const check_diagonal = function (isMainDiagonal: boolean = true) {
+        for (let x = radius - 1; x <= size - radius + 1; x += radius) {
             for (let y = 0; y < size; y++) {
                 if (arr[y][x] === 1 || arr[y][x] === 2) {
-                    const result = check_diagonals(x, y, true)
-                    if (result) return result
-                }
-            }
-        }
-    }
-
-    const check_side_diagonal = function () {
-        for (let x = 4; x <= size - 4; x += 5) {
-            for (let y = 0; y < size; y++) {
-                if (arr[y][x] === 1 || arr[y][x] === 2) {
-                    const result = check_diagonals(x, y, false)
+                    const result = check_diagonals(x, y, isMainDiagonal)
                     if (result) return result
                 }
             }
@@ -154,8 +145,7 @@ export const game = function (arr: number[][]) {
     }
 
     if (arr.length === size && arr[0].length === size) {
-        const result = check_horizontal() || check_vertical() || check_side_diagonal() || check_main_diagonal();
-        return result ? result : { winner: 0 }
+        return check_horizontal() || check_vertical() || check_diagonal(true) || check_diagonal(false) || { winner: 0 };
     } else {
         console.log('bad input arr shape')
     }
