@@ -131,22 +131,11 @@ export const game = function (arr: number[][]) {
         if (result) return { winner: arr[y][x], cell: result } as Result
     }
 
-    const check_main_diagonal = function () {
+    const check_diagonal = function(isMainDiagonal: boolean = true){
         for (let x = 4; x <= size - 4; x += 5) {
             for (let y = 0; y < size; y++) {
                 if (arr[y][x] === 1 || arr[y][x] === 2) {
-                    const result = check_diagonals(x, y, true)
-                    if (result) return result
-                }
-            }
-        }
-    }
-
-    const check_side_diagonal = function () {
-        for (let x = 4; x <= size - 4; x += 5) {
-            for (let y = 0; y < size; y++) {
-                if (arr[y][x] === 1 || arr[y][x] === 2) {
-                    const result = check_diagonals(x, y, false)
+                    const result = check_diagonals(x, y, isMainDiagonal)
                     if (result) return result
                 }
             }
@@ -154,8 +143,7 @@ export const game = function (arr: number[][]) {
     }
 
     if (arr.length === size && arr[0].length === size) {
-        const result = check_horizontal() || check_vertical() || check_side_diagonal() || check_main_diagonal();
-        return result ? result : { winner: 0 }
+        return check_horizontal() || check_vertical() || check_diagonal(true) || check_diagonal(false) || { winner: 0 };
     } else {
         console.log('bad input arr shape')
     }
