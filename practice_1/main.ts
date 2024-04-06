@@ -40,13 +40,13 @@ export const game = function (arr: number[][]) {
         }
     }
 
-    const check_axles = function (y: number, x: number, start: number, flag: boolean) {
+    const check_axles = function (y: number, x: number, start: number, isHorizontal: boolean) {
         const line = find_sequence(arr[y][x]);
         let result;
         const _start = start - radius > 0 ? start - radius : 0;
         const _end = start + radius < size ? start + radius : size - 1;
         for (let s = _start; s <= _end; s++) {
-            result = line.form(flag ? { x: s, y: y } : { x: x, y: s });
+            result = line.form(isHorizontal ? { x: s, y: y } : { x: x, y: s });
             if (result) return { winner: arr[y][x], cell: result } as Result
         }
         result = line.form(undefined);
@@ -120,12 +120,12 @@ export const game = function (arr: number[][]) {
         return { start_x, start_y, end_x }
     }
 
-    const check_diagonals = function (x: number, y: number, flag: boolean) {
-        const { start_x, start_y, end_x } = flag ? get_md_start_end(x, y) : get_sd_start_end(x, y);
+    const check_diagonals = function (x: number, y: number, isMainDiagonal: boolean) {
+        const { start_x, start_y, end_x } = isMainDiagonal ? get_md_start_end(x, y) : get_sd_start_end(x, y);
 
         const line = find_sequence(arr[y][x]);
         let result;
-        for (let i = start_x, k = start_y; i <= end_x; i++, k += flag ? -1 : 1) {
+        for (let i = start_x, k = start_y; i <= end_x; i++, k += isMainDiagonal ? -1 : 1) {
             result = line.form({ x: i, y: k });
             if (result) return { winner: arr[y][x], cell: result } as Result
         }
