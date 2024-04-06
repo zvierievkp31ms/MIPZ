@@ -1,8 +1,9 @@
 import { load_from_file, write_to_file } from "./file";
 import { game } from "./main";
+import { Settings } from "./constants";
 
+const chunkSize = Settings.fieldSize;
 const test_names = ['horizontal', 'vertical', 'side-diagonal', 'main-diagonal'];
-const chunkSize = 19;
 
 const get_path_to_test = (value: string) => {
     return `./examples/tests/test-${value}.txt`

@@ -1,3 +1,7 @@
+import { Settings } from "./constants";
+
+const { fieldSize: size, radius } = Settings;
+
 type Cell = {
     x: number
     y: number
@@ -9,9 +13,6 @@ export type Result = {
 }
 
 export const game = function (arr: number[][]) {
-    const size = 19;
-    const radius = 5;
-
     const find_sequence = function (user_type: number, sequence_length: number = radius) {
         let length = 0;
         let left_cell: Cell | null = null;
@@ -53,7 +54,7 @@ export const game = function (arr: number[][]) {
     }
 
     const check_horizontal = function () {
-        for (let x = radius - 1; x < size - radius - 1; x += radius) {
+        for (let x = radius - 1; x < size - radius + 1; x += radius) {
             for (let y = 0; y < size; y++) {
                 if (arr[y][x] === 1 || arr[y][x] === 2) {
                     const result = check_axles(y, x, x, true)
@@ -64,7 +65,7 @@ export const game = function (arr: number[][]) {
     }
 
     const check_vertical = function () {
-        for (let y = radius - 1; y < size - radius - 1; y += radius) {
+        for (let y = radius - 1; y < size - radius + 1; y += radius) {
             for (let x = 0; x < size; x++) {
                 if (arr[y][x] === 1 || arr[y][x] === 2) {
                     const result = check_axles(y, x, y, false)
@@ -133,7 +134,7 @@ export const game = function (arr: number[][]) {
     }
 
     const check_diagonal = function (isMainDiagonal: boolean = true) {
-        for (let x = radius - 1; x <= size - radius - 1; x += radius) {
+        for (let x = radius - 1; x <= size - radius + 1; x += radius) {
             for (let y = 0; y < size; y++) {
                 if (arr[y][x] === 1 || arr[y][x] === 2) {
                     const result = check_diagonals(x, y, isMainDiagonal)
