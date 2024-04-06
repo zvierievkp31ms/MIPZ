@@ -25,5 +25,5 @@ export const load_from_file = function (path: string) {
             return sub_arr.split('').map(Number);
         }
     })
-    return array.filter(item => item);
+    return array.filter(item => !Number.isNaN(item));
 }
