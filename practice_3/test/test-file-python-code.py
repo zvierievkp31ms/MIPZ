@@ -2,7 +2,6 @@
 print("Hello, World!") #another comment
 print("Hello, # World!")
 
-print("Hello, ''' World!")
 """ This is a comment
 # written in
 
@@ -10,18 +9,13 @@ more than just one line """
 
 '''
 '''
-for(i in range()):
-    print(i)
-for(i in range(len(x))):
 
-if(x === test())
-    return fun()
+
+def __setitem__(self, key, value):
+    """Set an item with check for allownew."""
 x = 1
 y = 2.8
 z = 1j
 
-print(type(x)) '''
-print(type(y))
-print(type(z))\\
-    x=13
-
+if x==1:
+    print(x)

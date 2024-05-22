@@ -2,10 +2,6 @@ import os
 
 from python_metrics import CodeMetrics
 
-def count_metrics_in_file(file_path):
-    with open(file_path, 'r', encoding='utf-8') as file:
-        return sum(1 for _ in file)
-
 def sum_dicts(dict1, dict2):
     combined_dict = dict1.copy()
     
